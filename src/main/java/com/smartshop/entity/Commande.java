@@ -51,20 +51,28 @@ public class Commande {
     @Column(nullable = false)
     private LocalDateTime dateModification;
 
+    @Column(nullable = false)
+    private int numeroPaiement;
+
 
     @ManyToOne
     @JoinColumn(name = "client_id",nullable = false)
     private Client client;
 
-    @OneToMany
-    @JoinColumn(name = "commande_id")
+    @OneToMany(mappedBy = "commande", cascade = CascadeType.ALL)
     private List<CommandeProduit> commandeProduits;
+
+    @OneToMany(mappedBy = "commande")
+    private List<Paiement> paiements;
+
 
 
     @PrePersist
-    public void setDateCreation(){
+    public void dateCreationSet(){
         this.dateCreation = LocalDateTime.now();
         this.dateModification = LocalDateTime.now();
+        this.numeroPaiement = 0;
+
     }
 
     @PreUpdate
