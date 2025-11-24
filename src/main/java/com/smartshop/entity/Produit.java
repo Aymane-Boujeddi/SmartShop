@@ -41,8 +41,7 @@ public class Produit {
     @Column(nullable = false)
     private LocalDateTime dateModification;
 
-    @OneToMany
-    @JoinColumn(name = "produit_id")
+    @OneToMany(mappedBy = "produit")
     private List<CommandeProduit> commandeProduits;
 
 
