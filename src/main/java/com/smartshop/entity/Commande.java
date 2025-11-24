@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Data
@@ -54,4 +55,20 @@ public class Commande {
     @ManyToOne
     @JoinColumn(name = "client_id",nullable = false)
     private Client client;
+
+    @OneToMany
+    @JoinColumn(name = "commande_id")
+    private List<CommandeProduit> commandeProduits;
+
+
+    @PrePersist
+    public void setDateCreation(){
+        this.dateCreation = LocalDateTime.now();
+        this.dateModification = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void setDateModification(){
+        this.dateModification = LocalDateTime.now();
+    }
 }

@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Data
@@ -37,6 +38,13 @@ public class Produit {
     @Column(nullable = false)
     private LocalDateTime dateCreation;
 
+    @Column(nullable = false)
+    private LocalDateTime dateModification;
+
+    @OneToMany
+    @JoinColumn(name = "produit_id")
+    private List<CommandeProduit> commandeProduits;
+
 
 
 
@@ -44,6 +52,12 @@ public class Produit {
     @PrePersist
     public void dateCreationSet(){
         this.dateCreation = LocalDateTime.now();
+        this.dateModification = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void dateModificationSet(){
+        this.dateModification = LocalDateTime.now();
     }
 
 
