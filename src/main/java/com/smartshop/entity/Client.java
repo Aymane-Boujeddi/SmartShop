@@ -55,7 +55,12 @@ public class Client {
     @PrePersist
     public void setDateCreation(){
         this.dateCreation = LocalDateTime.now();
+        this.montantCumule = 0.0;
+        this.niveauFidelite = NiveauFidelite.BASIC;
+        this.totalCommandes = 0;
     }
+
+
 
 
 
