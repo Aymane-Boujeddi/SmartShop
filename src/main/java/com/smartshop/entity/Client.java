@@ -30,6 +30,7 @@ public class Client {
     private String email;
 
     @Column(name = "niveau_fidelite")
+    @Enumerated(EnumType.STRING)
     private NiveauFidelite niveauFidelite;
 
 
@@ -48,7 +49,7 @@ public class Client {
     private User user;
 
     @OneToMany(mappedBy = "client")
-    private List<Commande> commande;
+    private List<Commande> commandes;
 
 
     @PrePersist
