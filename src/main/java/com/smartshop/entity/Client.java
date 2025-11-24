@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Builder
 @NoArgsConstructor
@@ -30,15 +32,25 @@ public class Client {
     private NiveauFidelite niveauFidelite;
 
 
+    @Column(nullable = false)
     private Double montantCumule;
 
+    @Column(nullable = false)
     private int totalCommandes;
+
+    @Column(nullable = false)
+    private LocalDateTime dateCreation;
+
 
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
 
 
+    @PrePersist
+    public void setDateCreation(){
+        this.dateCreation = LocalDateTime.now();
+    }
 
 
 
