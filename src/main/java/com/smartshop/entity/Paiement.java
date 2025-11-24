@@ -37,9 +37,11 @@ public class Paiement {
 
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private StatutPaiement statutPaiement;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private TypePaiement typePaiement;
 
     private LocalDate datePaiement;
