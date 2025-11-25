@@ -1,7 +1,7 @@
 package com.smartshop.service.impl;
 
 import com.smartshop.dto.request.LoginDTO;
-import com.smartshop.dto.response.LoginResponseDTO;
+import com.smartshop.dto.response.AuthResponseDTO;
 import com.smartshop.entity.User;
 import com.smartshop.exception.InvalidCredentialsException;
 import com.smartshop.repository.UserRepository;
@@ -19,7 +19,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
 
     @Override
-    public LoginResponseDTO handleLogin(LoginDTO loginDTO,HttpSession session) {
+    public AuthResponseDTO handleLogin(LoginDTO loginDTO, HttpSession session) {
         String username = loginDTO.getUsername();
         String password = loginDTO.getPassword();
 
@@ -33,7 +33,7 @@ public class AuthServiceImpl implements AuthService {
 
 
 
-        return LoginResponseDTO.builder()
+        return AuthResponseDTO.builder()
                 .message("Login successful")
                 .username(user.getUsername())
                 .role(user.getRole().toString())
