@@ -14,6 +14,7 @@ import com.smartshop.service.UserService;
 import com.smartshop.util.PasswordUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -43,6 +44,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
+    @Transactional
     public UserResponseDTO createUserClient(ClientCreationDTO clientCreationDTO) {
         String username = clientCreationDTO.getUsername();
         String password = clientCreationDTO.getPassword();
