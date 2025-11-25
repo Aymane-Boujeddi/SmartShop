@@ -1,47 +1,41 @@
 package com.smartshop.util;
 
 import com.smartshop.enums.Role;
+import com.smartshop.exception.ForbiddenException;
+import com.smartshop.exception.UnauthorizedException;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.stereotype.Component;
 
-@Component
 public class SecurityUtil {
 
-    public boolean isAuthenticated(HttpSession session) {
-
-        return session != null && session.getAttribute("userId") != null;
+    public static void checkAuthentication(HttpSession session) {
+        if (session == null || session.getAttribute("userId") == null) {
+            throw new UnauthorizedException("Authentication required");
+        }
     }
 
-    public boolean isAdmin(HttpSession session){
-        if(!isAuthenticated(session)){
-            return false;
-        }
+    public static void checkAdmin(HttpSession session) {
+        checkAuthentication(session);
         Role role = (Role) session.getAttribute("userRole");
-        return  Role.ADMIN.equals(role);
-
+        if (!Role.ADMIN.equals(role)) {
+            throw new ForbiddenException("Admin access required");
+        }
     }
 
-    public boolean isClient (HttpSession session){
-        if(!isAuthenticated(session)){
-            return false;
-        }
+    public static void checkClient(HttpSession session) {
+        checkAuthentication(session);
         Role role = (Role) session.getAttribute("userRole");
-
-        return Role.CLIENT.equals(role);
+        if (!Role.CLIENT.equals(role)) {
+            throw new ForbiddenException("Client access required");
+        }
     }
 
-    public Long getCurrentUserId(HttpSession session){
-        if(!isAuthenticated(session)){
-            return null;
-        }
+    public static Long getCurrentUserId(HttpSession session) {
+        checkAuthentication(session);
         return (Long) session.getAttribute("userId");
     }
-    public Role getCurrentUserRole(HttpSession session){
-        if(!isAuthenticated(session)){
-            return null;
-        }
+
+    public static Role getCurrentUserRole(HttpSession session) {
+        checkAuthentication(session);
         return (Role) session.getAttribute("userRole");
     }
-
-
 }
