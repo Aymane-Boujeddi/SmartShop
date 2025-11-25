@@ -34,6 +34,12 @@ public class UserController {
     }
 
     @GetMapping("/users")
+    public ResponseEntity<List<UserResponseDTO>> getAllUsers(HttpSession session){
+        SecurityUtil.checkAdmin(session);
+        return ResponseEntity.ok(userService.getAllUsers());
+    }
+
+    @GetMapping("/clients")
     public ResponseEntity<List<UserResponseDTO>> getAllClients(HttpSession session){
         SecurityUtil.checkAdmin(session);
         return ResponseEntity.ok(userService.getAllClients());
