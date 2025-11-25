@@ -1,6 +1,7 @@
 package com.smartshop.controller;
 
 import com.smartshop.dto.request.AdminCreationDTO;
+import com.smartshop.dto.request.ClientCreationDTO;
 import com.smartshop.dto.response.UserResponseDTO;
 import com.smartshop.service.UserService;
 import jakarta.validation.Valid;
@@ -23,6 +24,11 @@ public class UserController {
             return ResponseEntity.ok(userService.createUserAdmin(adminCreationDTO));
     }
 
+
+    @PostMapping("/client")
+    public ResponseEntity<UserResponseDTO> createClient(@Valid @RequestBody ClientCreationDTO clientCreationDTO){
+        return ResponseEntity.ok(userService.createUserClient(clientCreationDTO));
+    }
 
 
 }
