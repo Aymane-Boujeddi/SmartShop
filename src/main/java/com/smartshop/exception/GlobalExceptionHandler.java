@@ -35,4 +35,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
+    @ExceptionHandler(UsernameDuplicateExcception.class)
+    public ResponseEntity<ExceptionResponse> handleUsernameDuplicateException(UsernameDuplicateExcception exception){
+        ExceptionResponse response = ExceptionResponse.builder()
+                .message(exception.getMessage())
+                .dateException(LocalDateTime.now())
+                .httpStatus(HttpStatus.UNAUTHORIZED)
+                .httpCode(401)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
 }
