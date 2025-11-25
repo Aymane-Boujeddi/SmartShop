@@ -7,4 +7,5 @@ import jakarta.servlet.http.HttpSession;
 public interface AuthService {
 
     public AuthResponseDTO handleLogin(LoginDTO loginDTO, HttpSession session);
+    public AuthResponseDTO handleLogout(HttpSession session);
 }

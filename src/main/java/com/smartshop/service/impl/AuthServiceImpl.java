@@ -7,6 +7,7 @@ import com.smartshop.exception.InvalidCredentialsException;
 import com.smartshop.repository.UserRepository;
 import com.smartshop.service.AuthService;
 import com.smartshop.util.PasswordUtil;
+import com.smartshop.util.SecurityUtil;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,7 @@ public class AuthServiceImpl implements AuthService {
         if(user == null || !PasswordUtil.checkPassword(password,user.getPassword())){
             throw new InvalidCredentialsException("Invalid username or password");
         }
-
+        session.setAttribute("username",user.getUsername());
         session.setAttribute("userId", user.getId());
         session.setAttribute("userRole", user.getRole());
 
@@ -37,6 +38,16 @@ public class AuthServiceImpl implements AuthService {
                 .message("Login successful")
                 .username(user.getUsername())
                 .role(user.getRole().toString())
+                .build();
+    }
+
+    @Override
+    public AuthResponseDTO handleLogout(HttpSession session) {
+        session.invalidate();
+        return AuthResponseDTO.builder()
+                .message("Logout successful")
+                .username(SecurityUtil.getCurrentUsername(session))
+                .role(SecurityUtil.getCurrentUserRole(session).toString())
                 .build();
     }
 

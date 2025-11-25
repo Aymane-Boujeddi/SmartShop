@@ -34,6 +34,12 @@ public class SecurityUtil {
         return (Long) session.getAttribute("userId");
     }
 
+    public static String getCurrentUsername(HttpSession session) {
+        checkAuthentication(session);
+        return (String) session.getAttribute("username");
+    }
+
+
     public static Role getCurrentUserRole(HttpSession session) {
         checkAuthentication(session);
         return (Role) session.getAttribute("userRole");
