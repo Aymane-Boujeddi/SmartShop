@@ -28,20 +28,20 @@ public class GlobalExceptionHandler {
         ExceptionResponse response = ExceptionResponse.builder()
                 .message(exception.getMessage())
                 .dateException(LocalDateTime.now())
-                .httpStatus(HttpStatus.UNAUTHORIZED)
-                .httpCode(401)
+                .httpStatus(HttpStatus.BAD_REQUEST)
+                .httpCode(400)
                 .build();
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
-    @ExceptionHandler(UsernameDuplicateExcception.class)
-    public ResponseEntity<ExceptionResponse> handleUsernameDuplicateException(UsernameDuplicateExcception exception){
+    @ExceptionHandler(DuplicateCredentialsExcception.class)
+    public ResponseEntity<ExceptionResponse> handleUsernameDuplicateException(DuplicateCredentialsExcception exception){
         ExceptionResponse response = ExceptionResponse.builder()
                 .message(exception.getMessage())
                 .dateException(LocalDateTime.now())
-                .httpStatus(HttpStatus.UNAUTHORIZED)
-                .httpCode(401)
+                .httpStatus(HttpStatus.BAD_REQUEST)
+                .httpCode(400)
                 .build();
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
