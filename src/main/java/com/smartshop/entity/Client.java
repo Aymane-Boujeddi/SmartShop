@@ -43,6 +43,9 @@ public class Client {
     @Column(nullable = false)
     private LocalDateTime dateCreation;
 
+    private LocalDateTime datePremiereCommande;
+
+    private LocalDateTime dateDerniereCommande;
 
     @OneToOne
     @JoinColumn(name = "user_id")
@@ -58,6 +61,7 @@ public class Client {
         this.montantCumule = 0.0;
         this.niveauFidelite = NiveauFidelite.BASIC;
         this.totalCommandes = 0;
+
     }
 
 
