@@ -1,6 +1,5 @@
 package com.smartshop.service.impl;
 
-import com.smartshop.dto.request.AdminCreationDTO;
 import com.smartshop.dto.request.ClientCreationDTO;
 import com.smartshop.dto.response.UserResponseDTO;
 import com.smartshop.entity.Client;
@@ -11,9 +10,8 @@ import com.smartshop.exception.UserNotFoundException;
 import com.smartshop.mapper.UserMapper;
 import com.smartshop.repository.ClientRepository;
 import com.smartshop.repository.UserRepository;
-import com.smartshop.service.UserService;
+import com.smartshop.service.ClientService;
 import com.smartshop.util.PasswordUtil;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,29 +22,14 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService {
+public class ClientServiceImpl implements ClientService {
 
     private final UserRepository userRepository;
     private final ClientRepository clientRepository;
     private final UserMapper userMapper;
 
 
-    @Override
-    public UserResponseDTO createUserAdmin(AdminCreationDTO adminCreationDTO) {
-        String username = adminCreationDTO.getUsername();
-        String password = adminCreationDTO.getPassword();
 
-        checkDuplicatedUsername(username);
-
-        User user = User.builder()
-                .username(username)
-                .password(PasswordUtil.hashPassword(password))
-                .role(Role.ADMIN)
-
-                .build();
-        User savedUser = userRepository.save(user);
-        return userMapper.toAdminResponseDto(user);
-    }
 
 
     @Override
@@ -73,7 +56,7 @@ public class UserServiceImpl implements UserService {
         client.setUser(user);
         User savedUser = userRepository.save(user);
 
-        return userMapper.toClientResponseDto(user);
+        return userMapper.toClientResponseDto(savedUser);
     }
 
     @Override
@@ -97,14 +80,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDTO getClientById(Long id) {
 
-        User user = getUserByClientId(id);
+        User user = getUserById(id);
 
         return userMapper.toClientResponseDto(user);
     }
 
     @Override
     public Map<String, Object> deleteClientById(Long id) {
-        User user = getUserByClientId(id);
+        User user = getUserById(id);
 
         Map<String , Object> response = new HashMap<>();
 
@@ -130,8 +113,8 @@ public class UserServiceImpl implements UserService {
             throw new DuplicateCredentialsExcception("This email already exists : " + email);
         }
     }
-    private User getUserByClientId(Long id){
-        User user = userRepository.findUserByClient_Id(id);
+    private User getUserById(Long id){
+        User user = userRepository.findUserByIdAndRole_Client(id);
         if(user == null) {
             throw new UserNotFoundException("Client not found with this Id : " + id);
         }

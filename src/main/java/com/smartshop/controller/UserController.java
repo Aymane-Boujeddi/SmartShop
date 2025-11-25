@@ -1,9 +1,8 @@
 package com.smartshop.controller;
 
-import com.smartshop.dto.request.AdminCreationDTO;
 import com.smartshop.dto.request.ClientCreationDTO;
 import com.smartshop.dto.response.UserResponseDTO;
-import com.smartshop.service.UserService;
+import com.smartshop.service.ClientService;
 import com.smartshop.util.SecurityUtil;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -19,13 +18,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserService userService;
-
-    @PostMapping("/admin")
-    public ResponseEntity<UserResponseDTO> createAdmin(@Valid @RequestBody AdminCreationDTO adminCreationDTO, HttpSession session){
-        SecurityUtil.checkAdmin(session);
-            return ResponseEntity.ok(userService.createUserAdmin(adminCreationDTO));
-    }
+    private final ClientService userService;
 
 
     @PostMapping("/client")
@@ -57,4 +50,6 @@ public class UserController {
         SecurityUtil.checkAdmin(session);
         return ResponseEntity.ok(userService.deleteClientById(id));
     }
+
+    
 }
