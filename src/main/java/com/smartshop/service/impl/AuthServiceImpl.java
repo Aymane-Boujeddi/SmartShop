@@ -7,7 +7,6 @@ import com.smartshop.exception.InvalidCredentialsException;
 import com.smartshop.repository.UserRepository;
 import com.smartshop.service.AuthService;
 import com.smartshop.util.PasswordUtil;
-import com.smartshop.util.SecurityUtil;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
-    private final SecurityUtil securityUtil;
 
     private final UserRepository userRepository;
 
