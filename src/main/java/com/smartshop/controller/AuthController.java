@@ -3,6 +3,7 @@ package com.smartshop.controller;
 
 import com.smartshop.dto.request.LoginDTO;
 import com.smartshop.dto.response.AuthResponseDTO;
+import com.smartshop.dto.response.UserResponseDTO;
 import com.smartshop.service.AuthService;
 import com.smartshop.util.SecurityUtil;
 import jakarta.servlet.http.HttpSession;
@@ -27,5 +28,11 @@ public class AuthController {
     public ResponseEntity<AuthResponseDTO> handleLogout(HttpSession session){
         SecurityUtil.checkAuthentication(session);
         return ResponseEntity.ok(authService.handleLogout(session));
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<UserResponseDTO> getCurrentUser(HttpSession session){
+        SecurityUtil.checkAuthentication(session);
+        return ResponseEntity.ok(authService.getCurrentUser(session));
     }
 }
