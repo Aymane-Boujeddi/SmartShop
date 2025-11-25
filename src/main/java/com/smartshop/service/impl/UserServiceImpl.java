@@ -16,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -68,6 +70,16 @@ public class UserServiceImpl implements UserService {
         User savedUser = userRepository.save(user);
 
         return userMapper.toClientResponseDto(user);
+    }
+
+    @Override
+    public List<UserResponseDTO> getAllClients() {
+
+        List<User> users = userRepository.findAll();
+
+        return users.stream()
+                .map(userMapper::toClientResponseDto)
+                .toList();
     }
 
 

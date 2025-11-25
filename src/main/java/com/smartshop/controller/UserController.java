@@ -9,10 +9,9 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -32,6 +31,12 @@ public class UserController {
     public ResponseEntity<UserResponseDTO> createClient(@Valid @RequestBody ClientCreationDTO clientCreationDTO,HttpSession session){
         SecurityUtil.checkAdmin(session);
         return ResponseEntity.ok(userService.createUserClient(clientCreationDTO));
+    }
+
+    @GetMapping("/clients")
+    public ResponseEntity<List<UserResponseDTO>> getAllClients(HttpSession session){
+        SecurityUtil.checkAdmin(session);
+        return ResponseEntity.ok(userService.getAllClients());
     }
 
 
