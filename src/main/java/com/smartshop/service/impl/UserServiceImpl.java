@@ -7,11 +7,13 @@ import com.smartshop.entity.Client;
 import com.smartshop.entity.User;
 import com.smartshop.enums.Role;
 import com.smartshop.exception.DuplicateCredentialsExcception;
+import com.smartshop.exception.UserNotFoundException;
 import com.smartshop.mapper.UserMapper;
 import com.smartshop.repository.ClientRepository;
 import com.smartshop.repository.UserRepository;
 import com.smartshop.service.UserService;
 import com.smartshop.util.PasswordUtil;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -80,6 +82,16 @@ public class UserServiceImpl implements UserService {
         return users.stream()
                 .map(userMapper::toClientResponseDto)
                 .toList();
+    }
+
+    @Override
+    public UserResponseDTO getClientById(Long id) {
+
+        User user = userRepository.findUserByClient_Id(id);
+        if(user == null) {
+            throw new UserNotFoundException("Client not found with this Id : " + id);
+        }
+        return userMapper.toClientResponseDto(user);
     }
 
 

@@ -33,13 +33,16 @@ public class UserController {
         return ResponseEntity.ok(userService.createUserClient(clientCreationDTO));
     }
 
-    @GetMapping("/clients")
+    @GetMapping("/users")
     public ResponseEntity<List<UserResponseDTO>> getAllClients(HttpSession session){
         SecurityUtil.checkAdmin(session);
         return ResponseEntity.ok(userService.getAllClients());
     }
 
-
-
+    @GetMapping("/client/{id}")
+    public ResponseEntity<UserResponseDTO> getClientById(@PathVariable Long id,HttpSession session){
+        SecurityUtil.checkAdmin(session);
+        return ResponseEntity.ok(userService.getClientById(id));
+    }
 
 }

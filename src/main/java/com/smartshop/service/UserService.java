@@ -10,4 +10,5 @@ public interface UserService {
     public UserResponseDTO createUserAdmin(AdminCreationDTO adminCreationDTO);
     public UserResponseDTO createUserClient(ClientCreationDTO clientCreationDTO);
     public List<UserResponseDTO> getAllClients();
+    public UserResponseDTO getClientById(Long id);
 }
