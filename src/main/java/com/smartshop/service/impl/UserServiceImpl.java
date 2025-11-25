@@ -18,7 +18,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -95,11 +97,22 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDTO getClientById(Long id) {
 
-        User user = userRepository.findUserByClient_Id(id);
-        if(user == null) {
-            throw new UserNotFoundException("Client not found with this Id : " + id);
-        }
+        User user = getUserByClientId(id);
+
         return userMapper.toClientResponseDto(user);
+    }
+
+    @Override
+    public Map<String, Object> deleteClientById(Long id) {
+        User user = getUserByClientId(id);
+
+        Map<String , Object> response = new HashMap<>();
+
+        userRepository.delete(user);
+        response.put("message","Client deleted successfully");
+        response.put("Id", id.toString());
+
+        return response;
     }
 
 
@@ -116,5 +129,12 @@ public class UserServiceImpl implements UserService {
         if(client != null){
             throw new DuplicateCredentialsExcception("This email already exists : " + email);
         }
+    }
+    private User getUserByClientId(Long id){
+        User user = userRepository.findUserByClient_Id(id);
+        if(user == null) {
+            throw new UserNotFoundException("Client not found with this Id : " + id);
+        }
+        return user;
     }
 }

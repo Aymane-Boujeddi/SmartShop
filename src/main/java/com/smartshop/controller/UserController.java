@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -51,4 +52,9 @@ public class UserController {
         return ResponseEntity.ok(userService.getClientById(id));
     }
 
+    @DeleteMapping("/client/{id}")
+    public ResponseEntity<Map<String , Object>> deleteClientById(@PathVariable Long id, HttpSession session){
+        SecurityUtil.checkAdmin(session);
+        return ResponseEntity.ok(userService.deleteClientById(id));
+    }
 }
