@@ -77,7 +77,7 @@ public class Commande {
     private Client client;
 
     @OneToMany(mappedBy = "commande", cascade = CascadeType.ALL)
-    private List<CommandeProduit> commandeProduits;
+    private List<CommandeItem> commandeItems;
 
     @OneToMany(mappedBy = "commande")
     private List<Paiement> paiements;
@@ -89,8 +89,6 @@ public class Commande {
         this.dateCreation = LocalDateTime.now();
         this.dateModification = LocalDateTime.now();
         this.numeroPaiement = 0;
-        this.montantRestant = 0.0;
-
     }
 
     @PreUpdate
