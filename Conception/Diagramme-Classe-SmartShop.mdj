@@ -1715,7 +1715,7 @@
 											"top": 783,
 											"width": 167,
 											"height": 13,
-											"text": "CommandeProduit"
+											"text": "CommandeItem"
 										},
 										{
 											"_type": "LabelView",
@@ -6733,7 +6733,7 @@
 					"_parent": {
 						"$ref": "AAAAAAFF+qBWK6M3Z8Y="
 					},
-					"name": "CommandeProduit",
+					"name": "CommandeItem",
 					"ownedElements": [
 						{
 							"_type": "UMLAssociation",
