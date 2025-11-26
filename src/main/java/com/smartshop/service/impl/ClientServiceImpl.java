@@ -102,12 +102,14 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public UserResponseDTO updateClientById(Long id, ClientUpdateDTO clientUpdateDTO) {
         User user = getUserById(id);
-        checkDuplicateEmail(clientUpdateDTO.getEmail());
+        if(!user.getClient().getEmail().equals(clientUpdateDTO.getEmail())){
+            checkDuplicateEmail(clientUpdateDTO.getEmail());
+        }
         user.getClient().setNom(clientUpdateDTO.getNom());
         user.getClient().setEmail(clientUpdateDTO.getEmail());
 
         User savedUser = userRepository.save(user);
-        return userMapper.toClientResponseDto(user);
+        return userMapper.toClientResponseDto(savedUser);
     }
 
     private void checkDuplicatedUsername(String username){
