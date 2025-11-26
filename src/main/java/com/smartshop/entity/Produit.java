@@ -42,7 +42,7 @@ public class Produit {
     private LocalDateTime dateModification;
 
     @OneToMany(mappedBy = "produit")
-    private List<CommandeProduit> commandeProduits;
+    private List<CommandeItem> commandeItems;
 
 
 
