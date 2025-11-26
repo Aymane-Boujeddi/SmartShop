@@ -47,11 +47,13 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthResponseDTO handleLogout(HttpSession session) {
+        String username = SecurityUtil.getCurrentUsername(session);
+        String role = SecurityUtil.getCurrentUserRole(session).toString();
         session.invalidate();
         return AuthResponseDTO.builder()
                 .message("Logout successful")
-                .username(SecurityUtil.getCurrentUsername(session))
-                .role(SecurityUtil.getCurrentUserRole(session).toString())
+                .username(username)
+                .role(role)
                 .build();
     }
 
