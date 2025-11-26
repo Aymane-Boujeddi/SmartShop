@@ -1,6 +1,7 @@
 package com.smartshop.service.impl;
 
 import com.smartshop.dto.request.ClientCreationDTO;
+import com.smartshop.dto.request.ClientUpdateDTO;
 import com.smartshop.dto.response.UserResponseDTO;
 import com.smartshop.entity.Client;
 import com.smartshop.entity.User;
@@ -98,6 +99,16 @@ public class ClientServiceImpl implements ClientService {
         return response;
     }
 
+    @Override
+    public UserResponseDTO updateClientById(Long id, ClientUpdateDTO clientUpdateDTO) {
+        User user = getUserById(id);
+        checkDuplicateEmail(clientUpdateDTO.getEmail());
+        user.getClient().setNom(clientUpdateDTO.getNom());
+        user.getClient().setEmail(clientUpdateDTO.getEmail());
+
+        User savedUser = userRepository.save(user);
+        return userMapper.toClientResponseDto(user);
+    }
 
     private void checkDuplicatedUsername(String username){
         User user = userRepository.findUserByUsername(username);
@@ -114,7 +125,7 @@ public class ClientServiceImpl implements ClientService {
         }
     }
     private User getUserById(Long id){
-        User user = userRepository.findUserByIdAndRole_Client(id);
+        User user = userRepository.findUserByIdAndRole(id,Role.CLIENT);
         if(user == null) {
             throw new UserNotFoundException("Client not found with this Id : " + id);
         }

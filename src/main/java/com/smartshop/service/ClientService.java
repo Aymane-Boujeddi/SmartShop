@@ -1,6 +1,7 @@
 package com.smartshop.service;
 
 import com.smartshop.dto.request.ClientCreationDTO;
+import com.smartshop.dto.request.ClientUpdateDTO;
 import com.smartshop.dto.response.UserResponseDTO;
 
 import java.util.List;
@@ -12,4 +13,5 @@ public interface ClientService {
     public List<UserResponseDTO> getAllUsers();
     public UserResponseDTO getClientById(Long id);
     public Map<String , Object> deleteClientById(Long id);
+    public UserResponseDTO updateClientById(Long id, ClientUpdateDTO clientUpdateDTO);
 }
