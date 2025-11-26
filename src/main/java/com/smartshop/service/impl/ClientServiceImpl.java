@@ -31,7 +31,7 @@ public class ClientServiceImpl implements ClientService {
 
 
 
-
+    // Use Mapper to Entity instead of manual mapping
 
     @Override
     @Transactional
