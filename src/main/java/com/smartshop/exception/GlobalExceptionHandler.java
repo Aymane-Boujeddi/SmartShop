@@ -1,6 +1,8 @@
 package com.smartshop.exception;
 
 
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -11,24 +13,26 @@ import java.time.LocalDateTime;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+
     @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ExceptionResponse> handleUserNotFoundException(UserNotFoundException exception){
+    public ResponseEntity<ExceptionResponse> handleUserNotFoundException(UserNotFoundException exception, HttpServletRequest request){
         ExceptionResponse response = ExceptionResponse.builder()
                 .message(exception.getMessage())
                 .dateException(LocalDateTime.now())
                 .httpStatus(HttpStatus.UNAUTHORIZED)
-                .stackTrace(exception.getStackTrace())
+                .path(request.getRequestURI())
                 .httpCode(401)
                 .build();
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
     @ExceptionHandler(InvalidCredentialsException.class)
-    public ResponseEntity<ExceptionResponse> handleInvalidCredentials(InvalidCredentialsException exception) {
+    public ResponseEntity<ExceptionResponse> handleInvalidCredentials(InvalidCredentialsException exception,HttpServletRequest request) {
         ExceptionResponse response = ExceptionResponse.builder()
                 .message(exception.getMessage())
                 .dateException(LocalDateTime.now())
                 .httpStatus(HttpStatus.BAD_REQUEST)
+                .path(request.getRequestURI())
                 .httpCode(400)
                 .build();
 
@@ -36,11 +40,12 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(DuplicateCredentialsExcception.class)
-    public ResponseEntity<ExceptionResponse> handleUsernameDuplicateException(DuplicateCredentialsExcception exception){
+    public ResponseEntity<ExceptionResponse> handleUsernameDuplicateException(DuplicateCredentialsExcception exception,HttpServletRequest request){
         ExceptionResponse response = ExceptionResponse.builder()
                 .message(exception.getMessage())
                 .dateException(LocalDateTime.now())
                 .httpStatus(HttpStatus.BAD_REQUEST)
+                .path(request.getRequestURI())
                 .httpCode(400)
                 .build();
 
@@ -48,11 +53,12 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UnauthorizedException.class)
-    public ResponseEntity<ExceptionResponse> handleUnauthorized(UnauthorizedException ex) {
+    public ResponseEntity<ExceptionResponse> handleUnauthorized(UnauthorizedException exception,HttpServletRequest request) {
         ExceptionResponse response = ExceptionResponse.builder()
-                .message(ex.getMessage())
+                .message(exception.getMessage())
                 .dateException(LocalDateTime.now())
                 .httpStatus(HttpStatus.UNAUTHORIZED)
+                .path(request.getRequestURI())
                 .httpCode(401)
                 .build();
 
@@ -60,11 +66,12 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ForbiddenException.class)
-    public ResponseEntity<ExceptionResponse> handleForbidden(ForbiddenException ex) {
+    public ResponseEntity<ExceptionResponse> handleForbidden(ForbiddenException exception,HttpServletRequest request) {
         ExceptionResponse response = ExceptionResponse.builder()
-                .message(ex.getMessage())
+                .message(exception.getMessage())
                 .dateException(LocalDateTime.now())
                 .httpStatus(HttpStatus.FORBIDDEN)
+                .path(request.getRequestURI())
                 .httpCode(403)
                 .build();
 

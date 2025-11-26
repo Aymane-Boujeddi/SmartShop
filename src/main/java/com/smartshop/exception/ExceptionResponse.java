@@ -18,7 +18,7 @@ public class ExceptionResponse {
 
     private String message;
 
-    private StackTraceElement[] stackTrace;
+    private String path;
 
     private LocalDateTime dateException;
 
