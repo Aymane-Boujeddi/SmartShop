@@ -78,4 +78,21 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
     }
 
+    @ExceptionHandler(AlreadyLoggedInException.class)
+    public ResponseEntity<ExceptionResponse> handleAlreadyLoggedIn(
+            AlreadyLoggedInException exception,
+            HttpServletRequest request) {
+
+        ExceptionResponse response = ExceptionResponse.builder()
+                .message(exception.getMessage())
+                .dateException(LocalDateTime.now())
+                .httpStatus(HttpStatus.CONFLICT)
+                .path(request.getRequestURI())
+                .httpCode(409)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+
 }

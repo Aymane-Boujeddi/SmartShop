@@ -5,6 +5,7 @@ import com.smartshop.dto.response.AuthResponseDTO;
 import com.smartshop.dto.response.UserResponseDTO;
 import com.smartshop.entity.User;
 import com.smartshop.enums.Role;
+import com.smartshop.exception.AlreadyLoggedInException;
 import com.smartshop.exception.InvalidCredentialsException;
 import com.smartshop.mapper.UserMapper;
 import com.smartshop.repository.UserRepository;
@@ -27,6 +28,10 @@ public class AuthServiceImpl implements AuthService {
     public AuthResponseDTO handleLogin(LoginDTO loginDTO, HttpSession session) {
         String username = loginDTO.getUsername();
         String password = loginDTO.getPassword();
+
+        if (session.getAttribute("username") != null) {
+            throw new AlreadyLoggedInException("User is already logged in . ");
+        }
 
         User user = userRepository.findUserByUsername(username);
         if(user == null || !PasswordUtil.checkPassword(password,user.getPassword())){
