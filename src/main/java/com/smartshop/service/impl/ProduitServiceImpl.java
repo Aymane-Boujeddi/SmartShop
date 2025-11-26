@@ -59,6 +59,14 @@ public class ProduitServiceImpl implements ProduitService {
         return produitMapper.toResponseDto(savedProduit);
     }
 
+    @Override
+    public ProduitResponseDTO deleteProductById(Long id) {
+        Produit produit = getProductById(id);
+        produit.setDeleted(true);
+        Produit deletedProduct = produitRepository.save(produit);
+        return produitMapper.toResponseDto(deletedProduct);
+    }
+
 
     private Produit getProductById(Long id){
         return produitRepository.findById(id)

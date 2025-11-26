@@ -50,4 +50,13 @@ public class ProduitController {
         SecurityUtil.checkAdmin(session);
         return ResponseEntity.ok(produitService.updateProductById(id,produitRequestDTO));
     }
+
+    @DeleteMapping("/produit/{id}")
+    public ResponseEntity<ProduitResponseDTO> deleteProduit(@PathVariable Long id , HttpSession session){
+        SecurityUtil.checkAdmin(session);
+        return ResponseEntity.ok(produitService.deleteProductById(id));
+    }
+
+    
+
 }
