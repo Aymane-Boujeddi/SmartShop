@@ -6,10 +6,15 @@ import com.smartshop.entity.Produit;
 import com.smartshop.mapper.ProduitMapper;
 import com.smartshop.repository.ProduitRepository;
 import com.smartshop.service.ProduitService;
+import com.smartshop.specification.ProduitSpecification;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -37,10 +42,37 @@ public class ProduitServiceImpl implements ProduitService {
     }
 
     @Override
-    public List<ProduitResponseDTO> getAllProducts() {
-        List<Produit> produits = produitRepository.findAll();
+    public List<ProduitResponseDTO> getAllProducts(
+            Boolean deleted,
+            String nom,
+            Integer minStock,
+            Integer maxStock,
+            Double minPrice,
+            Double maxPrice,
+            LocalDateTime startCreationDate ,
+            LocalDateTime endCreationDate ,
+            Integer page ,
+            Integer size
 
-        return produits.stream().map(produitMapper::toResponseDto).toList();
+            ) {
+        Specification<Produit> specification = ProduitSpecification.isDeleted(deleted)
+                .and(ProduitSpecification.createdBetween(startCreationDate,endCreationDate))
+                .and(ProduitSpecification.hasName(nom))
+                .and(ProduitSpecification.hasStockBetween(minStock,maxStock))
+                .and(ProduitSpecification.hasPriceBetween(minPrice,maxPrice));
+
+        Pageable pageable = PageRequest.of(page,size);
+
+
+
+
+        return produitRepository
+                .findAll(specification,pageable)
+                .stream()
+                .map(produitMapper::toResponseDto)
+                .toList();
+
+
     }
 
 

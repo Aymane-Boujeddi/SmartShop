@@ -8,9 +8,12 @@ import com.smartshop.util.SecurityUtil;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -35,9 +38,26 @@ public class ProduitController {
     }
 
     @GetMapping("/produits")
-    public ResponseEntity<List<ProduitResponseDTO>> getAllProducts(HttpSession session){
+    public ResponseEntity<List<ProduitResponseDTO>> getAllProducts(
+            HttpSession session,
+            @RequestParam(required = false) String nom,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice,
+            @RequestParam(required = false) Integer minStock,
+            @RequestParam(required = false) Integer maxStock,
+            @RequestParam(defaultValue = "false") Boolean deleted,
+            @RequestParam(required = false)  LocalDateTime startCreationDate,
+            @RequestParam(required = false)  LocalDateTime endCreationDate,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+            ){
+
+
         SecurityUtil.checkAdmin(session);
-        return ResponseEntity.ok(produitService.getAllProducts());
+
+        return ResponseEntity.ok(produitService
+                .getAllProducts(deleted,nom,minStock,maxStock,minPrice,
+                        maxPrice,startCreationDate,endCreationDate,page,size));
     }
 
     @PutMapping("/produit/{id}")
@@ -57,6 +77,6 @@ public class ProduitController {
         return ResponseEntity.ok(produitService.deleteProductById(id));
     }
 
-    
+
 
 }
