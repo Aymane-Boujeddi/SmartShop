@@ -1,6 +1,7 @@
 package com.smartshop.exception;
 
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,17 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ExceptionResponse> handleUserNotFoundException(UserNotFoundException exception, HttpServletRequest request){
+        ExceptionResponse response = ExceptionResponse.builder()
+                .message(exception.getMessage())
+                .dateException(LocalDateTime.now())
+                .httpStatus(HttpStatus.UNAUTHORIZED)
+                .path(request.getRequestURI())
+                .httpCode(401)
+                .build();
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+    }
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> handleEntityNotFoundException(EntityNotFoundException exception, HttpServletRequest request){
         ExceptionResponse response = ExceptionResponse.builder()
                 .message(exception.getMessage())
                 .dateException(LocalDateTime.now())
@@ -93,6 +105,7 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
+    
 
 
 }
