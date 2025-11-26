@@ -10,6 +10,8 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ProduitServiceImpl implements ProduitService {
@@ -32,6 +34,13 @@ public class ProduitServiceImpl implements ProduitService {
     public ProduitResponseDTO getOneProductById(Long id) {
         Produit produit = getProductById(id);
         return produitMapper.toResponseDto(produit);
+    }
+
+    @Override
+    public List<ProduitResponseDTO> getAllProducts() {
+        List<Produit> produits = produitRepository.findAll();
+
+        return produits.stream().map(produitMapper::toResponseDto).toList();
     }
 
 

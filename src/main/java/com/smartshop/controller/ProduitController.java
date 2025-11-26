@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class ProduitController {
@@ -30,5 +32,11 @@ public class ProduitController {
     public ResponseEntity<ProduitResponseDTO> getOneProductById(@PathVariable Long id,HttpSession session){
         SecurityUtil.checkAdmin(session);
         return ResponseEntity.ok(produitService.getOneProductById(id));
+    }
+
+    @GetMapping("/produits")
+    public ResponseEntity<List<ProduitResponseDTO>> getAllProducts(HttpSession session){
+        SecurityUtil.checkAdmin(session);
+        return ResponseEntity.ok(produitService.getAllProducts());
     }
 }
