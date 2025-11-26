@@ -44,6 +44,22 @@ public class ProduitServiceImpl implements ProduitService {
     }
 
 
+
+    @Override
+    public ProduitResponseDTO updateProductById(Long id,ProduitRequestDTO produitRequestDTO) {
+        Produit produit = getProductById(id);
+
+        produit.setNom(produitRequestDTO.getNom());
+        produit.setPrixUnitaire(produitRequestDTO.getPrixUnitaire());
+        produit.setStockDisponible(produitRequestDTO.getStockDisponible());
+
+        Produit savedProduit = produitRepository.save(produit);
+
+
+        return produitMapper.toResponseDto(savedProduit);
+    }
+
+
     private Produit getProductById(Long id){
         return produitRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Product not found with this id :" + id));

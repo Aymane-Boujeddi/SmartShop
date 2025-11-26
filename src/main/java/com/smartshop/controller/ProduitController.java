@@ -39,4 +39,15 @@ public class ProduitController {
         SecurityUtil.checkAdmin(session);
         return ResponseEntity.ok(produitService.getAllProducts());
     }
+
+    @PutMapping("/produit/{id}")
+    public ResponseEntity<ProduitResponseDTO> updateProduit(
+            @PathVariable Long id,
+            @Valid @RequestBody ProduitRequestDTO produitRequestDTO,
+            HttpSession session
+            ){
+
+        SecurityUtil.checkAdmin(session);
+        return ResponseEntity.ok(produitService.updateProductById(id,produitRequestDTO));
+    }
 }

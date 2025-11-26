@@ -9,4 +9,5 @@ public interface ProduitService {
     public ProduitResponseDTO createProduit(ProduitRequestDTO produitRequestDTO);
     public ProduitResponseDTO getOneProductById(Long id);
     public List<ProduitResponseDTO> getAllProducts();
+    public ProduitResponseDTO updateProductById(Long id,ProduitRequestDTO produitRequestDTO);
 }
