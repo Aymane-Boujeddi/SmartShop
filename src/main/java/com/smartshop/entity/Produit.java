@@ -52,6 +52,7 @@ public class Produit {
     public void dateCreationSet(){
         this.dateCreation = LocalDateTime.now();
         this.dateModification = LocalDateTime.now();
+        this.deleted = false;
     }
 
     @PreUpdate
