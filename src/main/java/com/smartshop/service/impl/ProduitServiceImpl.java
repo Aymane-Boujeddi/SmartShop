@@ -6,6 +6,7 @@ import com.smartshop.entity.Produit;
 import com.smartshop.mapper.ProduitMapper;
 import com.smartshop.repository.ProduitRepository;
 import com.smartshop.service.ProduitService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,21 @@ public class ProduitServiceImpl implements ProduitService {
 
         Produit savedProduit = produitRepository.save(produit);
 
+
         return produitMapper.toResponseDto(savedProduit);
     }
+
+    @Override
+    public ProduitResponseDTO getOneProductById(Long id) {
+        Produit produit = getProductById(id);
+        return produitMapper.toResponseDto(produit);
+    }
+
+
+    private Produit getProductById(Long id){
+        return produitRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found with this id :" + id));
+    }
+
+
 }
