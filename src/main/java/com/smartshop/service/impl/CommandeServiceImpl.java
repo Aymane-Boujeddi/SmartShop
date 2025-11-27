@@ -115,7 +115,19 @@ public class CommandeServiceImpl implements CommandeService {
                 .toList();
     }
 
+    @Override
+    public CommandeResponseDTO getCommandeById(Long id) {
 
+        return commandeMapper.toResponseDto(findCommandeById(id));
+    }
+
+
+    // --------------------- Helper Methods (private)
+
+
+    private Commande findCommandeById(Long id){
+        return commandeRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Commande not found with this id :" + id));
+    }
     private User getUserById(Long id){
         User client =  userRepository.findUserByIdAndRole(id, Role.CLIENT);
 
