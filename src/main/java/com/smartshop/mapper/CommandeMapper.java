@@ -19,6 +19,7 @@ public interface CommandeMapper {
     @Mapping(target = "clientNom",source = "client.nom")
     @Mapping(target = "clientEmail",source = "client.email")
     @Mapping(target = "commandeItems",source = "commandeItems")
+    @Mapping(target = "TVA",source = "TVA")
     CommandeResponseDTO toResponseDto(Commande commande);
 
     @Mapping(target = "id", ignore = true)
@@ -35,6 +36,7 @@ public interface CommandeMapper {
     @Mapping(target = "client", ignore = true)
     @Mapping(target = "commandeItems", ignore = true)
     @Mapping(target = "paiements", ignore = true)
+    @Mapping(target = "TVA", ignore = true)
     Commande toEntity(CommandeRequestDTO commandeRequestDTO);
 
     @Named("statutToString")
