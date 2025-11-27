@@ -1,15 +1,14 @@
 package com.smartshop.entity;
 
 
-import com.smartshop.enums.StatutPaiement;
-import com.smartshop.enums.TypePaiement;
+import com.smartshop.enums.StatutPayment;
+import com.smartshop.enums.TypePayment;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -18,7 +17,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "paiements")
-public class Paiement {
+public class Payment {
 
 
     @Id
@@ -39,11 +38,11 @@ public class Paiement {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private StatutPaiement statutPaiement;
+    private StatutPayment statutPayment;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private TypePaiement typePaiement;
+    private TypePayment typePayment;
 
     private LocalDateTime datePaiement;
 
