@@ -7,10 +7,14 @@ import com.smartshop.util.SecurityUtil;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,7 +29,11 @@ public class CommandeController {
         return ResponseEntity.ok(commandeService.createCommande(commandeRequestDTO));
     }
 
-
+    @GetMapping("/commande")
+    public ResponseEntity<List<CommandeResponseDTO>> getAllCommande(HttpSession session){
+        SecurityUtil.checkAdmin(session);
+        return ResponseEntity.ok(commandeService.getAllCommande());
+    }
 
 
 }

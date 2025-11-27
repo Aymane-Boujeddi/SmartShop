@@ -106,6 +106,15 @@ public class CommandeServiceImpl implements CommandeService {
         return commandeMapper.toResponseDto(savedCommande);
     }
 
+    @Override
+    public List<CommandeResponseDTO> getAllCommande() {
+
+        return commandeRepository.findAll()
+                .stream()
+                .map(commandeMapper::toResponseDto)
+                .toList();
+    }
+
 
     private User getUserById(Long id){
         User client =  userRepository.findUserByIdAndRole(id, Role.CLIENT);
