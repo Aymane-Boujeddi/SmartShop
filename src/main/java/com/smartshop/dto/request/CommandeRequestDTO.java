@@ -23,9 +23,8 @@ public class CommandeRequestDTO {
     @Positive(message = "Client ID must be positive")
     private Long clientId;
 
-    @Min(value = 0, message = "TVA cannot be negative")
-    @Max(value = 100, message = "TVA cannot exceed 100%")
-    private int TVA;
+    @NotNull(message = "TVA is required")
+    private int tva;
 
     @NotEmpty(message = "Order must contain at least one item")
     @Valid
