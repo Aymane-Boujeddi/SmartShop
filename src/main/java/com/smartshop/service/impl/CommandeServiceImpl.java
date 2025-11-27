@@ -127,6 +127,17 @@ public class CommandeServiceImpl implements CommandeService {
         return payedCommandes.stream().map(commandeMapper::toResponseDto).toList();
     }
 
+    @Override
+    public Map<String , Object> deleteCommande(Long id) {
+        Commande commande = findCommandeById(id);
+        Map<String ,Object> resposne = new HashMap<>();
+        CommandeResponseDTO responseDTO = commandeMapper.toResponseDto(commande);
+        commandeRepository.delete(commande);
+        resposne.put("Message" , "Commande Deleted Successfully");
+        resposne.put("Deleted Commande" , responseDTO);
+        return resposne;
+    }
+
 
     // --------------------- Helper Methods (private)
 

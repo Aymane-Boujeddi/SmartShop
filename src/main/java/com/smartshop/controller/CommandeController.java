@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -44,4 +45,10 @@ public class CommandeController {
         return ResponseEntity.ok(commandeService.getPayedCommandes());
     }
 
+    @DeleteMapping("/commande/{id}")
+    public ResponseEntity<Map<String , Object>> deleteCommande(@PathVariable Long id, HttpSession session){
+        SecurityUtil.checkAdmin(session);
+        return ResponseEntity.ok(commandeService.deleteCommande(id));
+
+        }
 }
