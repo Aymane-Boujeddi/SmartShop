@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -44,13 +45,18 @@ public class Paiement {
     @Enumerated(EnumType.STRING)
     private TypePaiement typePaiement;
 
-    private LocalDate datePaiement;
+    private LocalDateTime datePaiement;
 
-    private LocalDate dateEncaissement;
+    private LocalDateTime dateEncaissement;
 
     @ManyToOne
     @JoinColumn(name = "commande_id",nullable = false)
     private Commande commande;
+
+    @PrePersist
+    public void dateInit(){
+        this.datePaiement = LocalDateTime.now();
+    }
 
 
 
