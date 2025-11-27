@@ -80,7 +80,7 @@ public class Commande {
     private List<CommandeItem> commandeItems;
 
     @OneToMany(mappedBy = "commande")
-    private List<Paiement> paiements;
+    private List<Payment> payments;
 
 
 
