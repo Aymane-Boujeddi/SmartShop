@@ -38,4 +38,10 @@ public class CommandeController {
         return ResponseEntity.ok(commandeService.getCommandeById(id));
     }
 
+    @GetMapping("/commande-payed")
+    public ResponseEntity<List<CommandeResponseDTO>> getPayedCommandes(HttpSession session){
+        SecurityUtil.checkAdmin(session);
+        return ResponseEntity.ok(commandeService.getPayedCommandes());
+    }
+
 }

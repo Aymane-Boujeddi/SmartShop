@@ -10,4 +10,5 @@ public interface CommandeService {
     public CommandeResponseDTO createCommande(CommandeRequestDTO commandeRequestDTO);
     public List<CommandeResponseDTO> getAllCommande();
     public CommandeResponseDTO getCommandeById(Long id);
+    public List<CommandeResponseDTO> getPayedCommandes();
 }

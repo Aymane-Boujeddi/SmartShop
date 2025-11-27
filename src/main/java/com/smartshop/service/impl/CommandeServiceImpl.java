@@ -121,6 +121,12 @@ public class CommandeServiceImpl implements CommandeService {
         return commandeMapper.toResponseDto(findCommandeById(id));
     }
 
+    @Override
+    public List<CommandeResponseDTO> getPayedCommandes() {
+        List<Commande> payedCommandes = commandeRepository.findAllByMontantRestant(0.0);
+        return payedCommandes.stream().map(commandeMapper::toResponseDto).toList();
+    }
+
 
     // --------------------- Helper Methods (private)
 
