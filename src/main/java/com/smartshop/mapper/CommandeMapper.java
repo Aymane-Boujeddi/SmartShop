@@ -35,7 +35,7 @@ public interface CommandeMapper {
     @Mapping(target = "montantRestant", ignore = true)
     @Mapping(target = "client", ignore = true)
     @Mapping(target = "commandeItems", ignore = true)
-    @Mapping(target = "paiements", ignore = true)
+    @Mapping(target = "payments", ignore = true)
     @Mapping(target = "TVA", ignore = true)
     Commande toEntity(CommandeRequestDTO commandeRequestDTO);
 
