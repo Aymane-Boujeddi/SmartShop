@@ -60,6 +60,12 @@ public class PaymentServiceImpl implements PaymentService {
         return paymentList.stream().map(paymentMapper::toResponseDto).toList();
     }
 
+    @Override
+    public List<PaymentResponseDTO> getAllPayments() {
+
+        return paymentRepository.findAll().stream().map(paymentMapper::toResponseDto).toList();
+    }
+
     private StatutPayment getStatutFromPaymentType(TypePayment typePayment){
         if(typePayment.equals(TypePayment.CHEQUE)){
             return StatutPayment.EN_ATTENTE;

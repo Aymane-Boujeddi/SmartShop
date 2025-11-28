@@ -9,4 +9,5 @@ public interface PaymentService {
 
     public PaymentResponseDTO createPayment(PaymentRequestDTO paymentRequestDTO);
     public List<PaymentResponseDTO> getPaymentsForCommande(Long id);
+    public List<PaymentResponseDTO> getAllPayments();
 }

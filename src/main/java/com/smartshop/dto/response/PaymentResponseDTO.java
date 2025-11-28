@@ -17,6 +17,7 @@ public class PaymentResponseDTO {
 
     private Long id;
     private Long commandeId;
+    private String clientName;
     private Double montant;
     private String reference;
     private String banque;
