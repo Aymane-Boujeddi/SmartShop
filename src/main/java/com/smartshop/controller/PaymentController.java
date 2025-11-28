@@ -9,9 +9,9 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,5 +24,11 @@ public class PaymentController {
     public ResponseEntity<PaymentResponseDTO> createPayment(@Valid @RequestBody PaymentRequestDTO paymentRequestDTO, HttpSession session){
         SecurityUtil.checkAdmin(session);
         return ResponseEntity.ok(paymentService.createPayment(paymentRequestDTO));
+    }
+
+    @GetMapping("/payment/commande/{id}")
+    public ResponseEntity<List<PaymentResponseDTO>> getPaymentsForOneCommande(@PathVariable Long id, HttpSession session){
+        SecurityUtil.checkAdmin(session);
+        return ResponseEntity.ok(paymentService.getPaymentsForCommande(id));
     }
 }

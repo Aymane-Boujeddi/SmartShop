@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -51,6 +52,12 @@ public class PaymentServiceImpl implements PaymentService {
 
 
         return paymentMapper.toResponseDto(savedPayment);
+    }
+
+    @Override
+    public List<PaymentResponseDTO> getPaymentsForCommande(Long id) {
+        List<Payment> paymentList = getCommandeByID(id).getPayments();
+        return paymentList.stream().map(paymentMapper::toResponseDto).toList();
     }
 
     private StatutPayment getStatutFromPaymentType(TypePayment typePayment){
