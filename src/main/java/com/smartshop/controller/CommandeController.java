@@ -50,5 +50,11 @@ public class CommandeController {
         SecurityUtil.checkAdmin(session);
         return ResponseEntity.ok(commandeService.deleteCommande(id));
 
-        }
+    }
+
+    @PutMapping("/commande-confirme/{id}")
+    public ResponseEntity<CommandeResponseDTO> updateCommandeStatutToConfirmed(@PathVariable Long id,HttpSession session){
+        SecurityUtil.checkAdmin(session);
+        return ResponseEntity.ok(commandeService.updateCommandeStatutConfirmed(id));
+    }
 }

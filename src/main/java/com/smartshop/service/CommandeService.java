@@ -13,4 +13,5 @@ public interface CommandeService {
     public CommandeResponseDTO getCommandeById(Long id);
     public List<CommandeResponseDTO> getPayedCommandes();
     public Map<String , Object> deleteCommande(Long id);
+    public CommandeResponseDTO updateCommandeStatutConfirmed(Long id);
 }

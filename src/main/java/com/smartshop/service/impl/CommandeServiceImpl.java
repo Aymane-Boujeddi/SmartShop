@@ -10,16 +10,14 @@ import com.smartshop.exception.CannotDeleteException;
 import com.smartshop.exception.StockInsuffisantException;
 import com.smartshop.exception.UserNotFoundException;
 import com.smartshop.mapper.CommandeMapper;
-import com.smartshop.repository.CommandeRepository;
-import com.smartshop.repository.PaymentRepository;
-import com.smartshop.repository.ProduitRepository;
-import com.smartshop.repository.UserRepository;
+import com.smartshop.repository.*;
 import com.smartshop.service.CommandeService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +31,8 @@ public class CommandeServiceImpl implements CommandeService {
     private final CommandeRepository commandeRepository;
 
     private final ProduitRepository produitRepository;
+
+    private final ClientRepository clientRepository;
 
     private final CommandeMapper commandeMapper;
 
@@ -55,6 +55,7 @@ public class CommandeServiceImpl implements CommandeService {
                     if(commandeItemRequestDTO.getQuantite() > produit.getStockDisponible()){
                         throw new StockInsuffisantException(
                                 "Insufficient stock for product: " + produit.getNom()
+                                + " . ID : " + produit.getId()
                         );
                     }
                     return CommandeItem.builder()
@@ -142,7 +143,33 @@ public class CommandeServiceImpl implements CommandeService {
         return resposne;
     }
 
-    
+    @Transactional
+    @Override
+    public CommandeResponseDTO updateCommandeStatutConfirmed(Long id) {
+        Commande commande = findCommandeById(id);
+        canConfirme(commande);
+
+
+        Client client = commande.getClient();
+        if(client.getTotalCommandes() == 0 ){
+            client.setDatePremiereCommande(LocalDateTime.now());
+        }
+        client.setDateDerniereCommande(LocalDateTime.now());
+        client.setMontantCumule(commande.getTotalTTC() + client.getMontantCumule());
+        client.setTotalCommandes(client.getTotalCommandes() + 1);
+        client.setNiveauFidelite(updateNiveauFidelite(client));
+
+        Client savedClient = clientRepository.save(client);
+
+        commande.setStatutCommande(StatutCommande.CONFIRMED);
+
+        commande.setClient(savedClient);
+
+        Commande savedCommande = commandeRepository.save(commande);
+
+        return commandeMapper.toResponseDto(savedCommande);
+    }
+
 
 
 
@@ -211,6 +238,36 @@ public class CommandeServiceImpl implements CommandeService {
             throw new CannotDeleteException("Cannot delete Commande because it's status is : " + commande.getStatutCommande());        }
 
     }
+    private void canConfirme(Commande commande){
+        Double montantRestant = commande.getMontantRestant();
+
+        if(!commande.getStatutCommande().equals(StatutCommande.PENDING)){
+            throw new IllegalArgumentException("Cannot confirme Commande . Only confirme commande with status(Pending) . This Commande status : " + commande.getStatutCommande() );
+        }
+
+        if (montantRestant > 0 ){
+            throw new IllegalArgumentException("Cannot confirme this commande because it is not fully paid . Ammount to pay : " + montantRestant);
+        }
+
+    }
+
+    private NiveauFidelite updateNiveauFidelite(Client client){
+        int totalCommande = client.getTotalCommandes();
+        Double totalCumule = client.getMontantCumule();
+        NiveauFidelite fidelite = NiveauFidelite.BASIC;
+        if (totalCommande >= 20 || totalCumule >= 15000) {
+            return NiveauFidelite.PLATINUM;
+        } else if (totalCommande >= 10 || totalCumule >= 5000) {
+            return NiveauFidelite.GOLD;
+        } else if (totalCommande >= 3 || totalCumule >= 1000) {
+            return NiveauFidelite.SILVER;
+        } else {
+            return NiveauFidelite.BASIC;
+        }
+    }
+
+
+
 
 
 
