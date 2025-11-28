@@ -91,6 +91,24 @@ public class GlobalExceptionHandler {
             HttpServletRequest request) {
         return buildErrorResponse(exception.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY, request);
     }
+    @ExceptionHandler(PaymentNotPossibleException.class)
+    public ResponseEntity<ExceptionResponse> handlePaymentNotPossible(
+            PaymentNotPossibleException exception,
+            HttpServletRequest request) {
+        return buildErrorResponse(exception.getMessage(), HttpStatus.UNPROCESSABLE_ENTITY, request);
+    }
+
+    @ExceptionHandler(CannotDeleteException.class)
+    public ResponseEntity<ExceptionResponse> handleCannotDelete(CannotDeleteException ex) {
+        ExceptionResponse response = ExceptionResponse.builder()
+                .message(ex.getMessage())
+                .dateException(LocalDateTime.now())
+                .httpStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+                .httpCode(422)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(response);
+    }
 
     // --------------- Sql and jpa Exceptions
 

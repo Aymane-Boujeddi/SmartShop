@@ -6,10 +6,12 @@ import com.smartshop.entity.*;
 import com.smartshop.enums.NiveauFidelite;
 import com.smartshop.enums.Role;
 import com.smartshop.enums.StatutCommande;
+import com.smartshop.exception.CannotDeleteException;
 import com.smartshop.exception.StockInsuffisantException;
 import com.smartshop.exception.UserNotFoundException;
 import com.smartshop.mapper.CommandeMapper;
 import com.smartshop.repository.CommandeRepository;
+import com.smartshop.repository.PaymentRepository;
 import com.smartshop.repository.ProduitRepository;
 import com.smartshop.repository.UserRepository;
 import com.smartshop.service.CommandeService;
@@ -33,6 +35,7 @@ public class CommandeServiceImpl implements CommandeService {
     private final ProduitRepository produitRepository;
 
     private final CommandeMapper commandeMapper;
+
 
 
     @Transactional
@@ -130,6 +133,7 @@ public class CommandeServiceImpl implements CommandeService {
     @Override
     public Map<String , Object> deleteCommande(Long id) {
         Commande commande = findCommandeById(id);
+        canDelete(commande);
         Map<String ,Object> resposne = new HashMap<>();
         CommandeResponseDTO responseDTO = commandeMapper.toResponseDto(commande);
         commandeRepository.delete(commande);
@@ -137,6 +141,9 @@ public class CommandeServiceImpl implements CommandeService {
         resposne.put("Deleted Commande" , responseDTO);
         return resposne;
     }
+
+    
+
 
 
     // --------------------- Helper Methods (private)
@@ -195,6 +202,14 @@ public class CommandeServiceImpl implements CommandeService {
             remiseAndThreshhold.put("remise",remise);
             remiseAndThreshhold.put("threshold",threshold);
             return remiseAndThreshhold;
+    }
+    private void canDelete(Commande commande){
+        List<Payment> payments = commande.getPayments();
+        if(!payments.isEmpty()){
+            throw new CannotDeleteException("Cannot delete Commande because it has payment");
+        } else if (!commande.getStatutCommande().equals(StatutCommande.PENDING)) {
+            throw new CannotDeleteException("Cannot delete Commande because it's status is : " + commande.getStatutCommande());        }
+
     }
 
 
