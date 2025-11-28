@@ -16,7 +16,7 @@ public interface PaymentMapper {
     @Mapping(target = "numeroPaiement", ignore = true)
     @Mapping(target = "montant", ignore = true)
     @Mapping(target = "statutPayment", ignore = true)
-    @Mapping(target = "datePayment", ignore = true)
+    @Mapping(target = "datePaiement", ignore = true)
     @Mapping(target = "dateEncaissement", ignore = true)
     @Mapping(target = "commande", ignore = true)
     Payment toEntity(PaymentRequestDTO paymentRequestDTO);

@@ -23,6 +23,6 @@ public class PaymentResponseDTO {
     private int numeroPaiement;
     private TypePayment typePayment;
     private StatutPayment statutPayment;
-    private LocalDateTime dateCreation;
-    private LocalDateTime dateModification;
+    private LocalDateTime datePaiment;
+    private LocalDateTime dateEncaissement;
 }
