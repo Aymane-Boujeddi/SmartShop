@@ -137,11 +137,18 @@ public class CommandeServiceImpl implements CommandeService {
         canDelete(commande);
         Map<String ,Object> resposne = new HashMap<>();
         CommandeResponseDTO responseDTO = commandeMapper.toResponseDto(commande);
+
+        commande.getCommandeItems().forEach(commandeItem -> {
+            Produit produit = getProduitById(commandeItem.getProduit().getId());
+            produit.setStockDisponible(produit.getStockDisponible() + commandeItem.getQuantite());
+            produitRepository.save(produit);
+        });
         commandeRepository.delete(commande);
         resposne.put("Message" , "Commande Deleted Successfully");
         resposne.put("Deleted Commande" , responseDTO);
         return resposne;
     }
+
 
     @Transactional
     @Override
@@ -169,6 +176,8 @@ public class CommandeServiceImpl implements CommandeService {
 
         return commandeMapper.toResponseDto(savedCommande);
     }
+
+
 
 
 
@@ -250,7 +259,6 @@ public class CommandeServiceImpl implements CommandeService {
         }
 
     }
-
     private NiveauFidelite updateNiveauFidelite(Client client){
         int totalCommande = client.getTotalCommandes();
         Double totalCumule = client.getMontantCumule();
