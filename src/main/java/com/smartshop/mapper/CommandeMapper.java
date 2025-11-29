@@ -9,7 +9,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
-@Mapper(componentModel = "spring",uses = {CommandeItemMapper.class})
+@Mapper(componentModel = "spring",uses = {CommandeItemMapper.class , PaymentMapper.class})
 public interface CommandeMapper {
 
 
@@ -19,6 +19,7 @@ public interface CommandeMapper {
     @Mapping(target = "clientNom",source = "client.nom")
     @Mapping(target = "clientEmail",source = "client.email")
     @Mapping(target = "commandeItems",source = "commandeItems")
+    @Mapping(target = "payments",source = "payments")
     @Mapping(target = "TVA",source = "TVA")
     CommandeResponseDTO toResponseDto(Commande commande);
 

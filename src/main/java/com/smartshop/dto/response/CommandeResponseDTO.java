@@ -34,4 +34,5 @@ public class CommandeResponseDTO {
     private String clientEmail;
 
     private List<CommandeItemResponseDTO> commandeItems;
+    private List<PaymentResponseDTO> payments;
 }
