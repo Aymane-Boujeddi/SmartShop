@@ -71,6 +71,25 @@ public class PaymentServiceImpl implements PaymentService {
 
         return paymentMapper.toResponseDto(findPaymentById(id));
     }
+
+    @Transactional
+    @Override
+    public PaymentResponseDTO updatePaymentToEncaisse(Long id) {
+        Payment payment = findPaymentById(id);
+        Commande commande = payment.getCommande();
+        if(!payment.getStatutPayment().equals(StatutPayment.EN_ATTENTE)){
+            throw new PaymentNotPossibleException("Payment cannot be updated to ENCAISSE . Current status : " + payment.getStatutPayment());
+        }
+
+        payment.setDateEncaissement(LocalDateTime.now());
+        commande.setMontantRestant(commande.getMontantRestant() - payment.getMontant());
+
+        Commande savedCommande = commandeRepository.save(commande);
+        payment.setCommande(savedCommande);
+        Payment savedPayment = paymentRepository.save(payment);
+        return paymentMapper.toResponseDto(savedPayment);
+    }
+
     private Payment findPaymentById(Long id){
         return paymentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Payment not found with this id : "+ id));
     }

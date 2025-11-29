@@ -43,4 +43,12 @@ public class PaymentController {
         SecurityUtil.checkAdmin(session);
         return ResponseEntity.ok(paymentService.getPaymentById(id));
     }
+
+    @PutMapping("/payment-encaisse/{id}")
+    public ResponseEntity<PaymentResponseDTO> updatePaymentChequetoEncaisse(@PathVariable Long id,HttpSession session){
+        SecurityUtil.checkAdmin(session);
+        return ResponseEntity.ok(paymentService.updatePaymentToEncaisse(id));
+    }
+
+    
 }

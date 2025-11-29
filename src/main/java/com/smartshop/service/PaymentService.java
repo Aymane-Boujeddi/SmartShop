@@ -11,4 +11,5 @@ public interface PaymentService {
     public List<PaymentResponseDTO> getPaymentsForCommande(Long id);
     public List<PaymentResponseDTO> getAllPayments();
     public PaymentResponseDTO getPaymentById(Long id);
+    public PaymentResponseDTO updatePaymentToEncaisse(Long id);
 }
