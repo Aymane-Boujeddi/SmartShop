@@ -77,10 +77,13 @@ public class PaymentServiceImpl implements PaymentService {
     public PaymentResponseDTO updatePaymentToEncaisse(Long id) {
         Payment payment = findPaymentById(id);
         Commande commande = payment.getCommande();
-        if(!payment.getStatutPayment().equals(StatutPayment.EN_ATTENTE)){
-            throw new PaymentNotPossibleException("Payment cannot be updated to ENCAISSE . Current status : " + payment.getStatutPayment());
-        }
+        if(payment.getStatutPayment().equals(StatutPayment.ENCAISSE)){
+            throw new PaymentNotPossibleException("Payment is already updated to ENCAISSE" );
+        } else if (payment.getStatutPayment().equals(StatutPayment.REJETE)) {
+            throw new PaymentNotPossibleException("Payment is Rejected cannot update it to  ENCAISSE");
 
+        }
+        payment.setStatutPayment(StatutPayment.ENCAISSE);
         payment.setDateEncaissement(LocalDateTime.now());
         commande.setMontantRestant(commande.getMontantRestant() - payment.getMontant());
 
@@ -90,11 +93,25 @@ public class PaymentServiceImpl implements PaymentService {
         return paymentMapper.toResponseDto(savedPayment);
     }
 
+    @Override
+    public PaymentResponseDTO updatePaymentToRejete(Long id) {
+        Payment payment = findPaymentById(id);
+        if(payment.getStatutPayment().equals(StatutPayment.ENCAISSE)){
+            throw new PaymentNotPossibleException("Payment Confirmed cannot be Rejected  ");
+        } else if (payment.getStatutPayment().equals(StatutPayment.REJETE)) {
+            throw new PaymentNotPossibleException("Payment already Rejected  ");
+        }
+        payment.setStatutPayment(StatutPayment.REJETE);
+
+        Payment savedPayment = paymentRepository.save(payment);
+        return paymentMapper.toResponseDto(savedPayment);
+    }
+
     private Payment findPaymentById(Long id){
         return paymentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Payment not found with this id : "+ id));
     }
     private StatutPayment getStatutFromPaymentType(TypePayment typePayment){
-        if(typePayment.equals(TypePayment.CHEQUE)){
+        if(!typePayment.equals(TypePayment.ESPECE)){
             return StatutPayment.EN_ATTENTE;
         }else{
             return StatutPayment.ENCAISSE;

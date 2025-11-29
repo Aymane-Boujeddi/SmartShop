@@ -45,10 +45,14 @@ public class PaymentController {
     }
 
     @PutMapping("/payment-encaisse/{id}")
-    public ResponseEntity<PaymentResponseDTO> updatePaymentChequetoEncaisse(@PathVariable Long id,HttpSession session){
+    public ResponseEntity<PaymentResponseDTO> updatePaymentToEncaisse(@PathVariable Long id,HttpSession session){
         SecurityUtil.checkAdmin(session);
         return ResponseEntity.ok(paymentService.updatePaymentToEncaisse(id));
     }
 
-    
+    @PutMapping("/payment-rejete/{id}")
+    public ResponseEntity<PaymentResponseDTO> updatePaymentToRejecte(@PathVariable Long id,HttpSession session){
+        SecurityUtil.checkAdmin(session);
+        return ResponseEntity.ok();
+    }
 }
