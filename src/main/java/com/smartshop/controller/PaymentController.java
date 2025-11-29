@@ -37,4 +37,10 @@ public class PaymentController {
         SecurityUtil.checkAdmin(session);
         return ResponseEntity.ok(paymentService.getAllPayments());
     }
+
+    @GetMapping("/payment/{id}")
+    public ResponseEntity<PaymentResponseDTO> getPaymentById(@PathVariable Long id,HttpSession session){
+        SecurityUtil.checkAdmin(session);
+        return ResponseEntity.ok(paymentService.getPaymentById(id));
+    }
 }
