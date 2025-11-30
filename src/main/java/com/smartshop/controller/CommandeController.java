@@ -57,4 +57,10 @@ public class CommandeController {
         SecurityUtil.checkAdmin(session);
         return ResponseEntity.ok(commandeService.updateCommandeStatutConfirmed(id));
     }
+
+    @PutMapping("/commande-cancel/{id}")
+    public ResponseEntity<CommandeResponseDTO> updateCommandeStatutToCanceled(@PathVariable Long id,HttpSession session){
+        SecurityUtil.checkAdmin(session);
+        return ResponseEntity.ok(commandeService.updateCommandeStatutCanceled(id));
+    }
 }

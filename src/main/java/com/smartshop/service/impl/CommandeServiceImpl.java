@@ -4,11 +4,9 @@ import com.smartshop.dto.request.CommandeRequestDTO;
 import com.smartshop.dto.response.CommandeResponseDTO;
 import com.smartshop.entity.*;
 import com.smartshop.enums.NiveauFidelite;
-import com.smartshop.enums.Role;
 import com.smartshop.enums.StatutCommande;
 import com.smartshop.exception.CannotDeleteException;
 import com.smartshop.exception.StockInsuffisantException;
-import com.smartshop.exception.UserNotFoundException;
 import com.smartshop.mapper.CommandeMapper;
 import com.smartshop.repository.*;
 import com.smartshop.service.CommandeService;
@@ -26,7 +24,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class CommandeServiceImpl implements CommandeService {
 
-    private final UserRepository userRepository;
 
     private final CommandeRepository commandeRepository;
 
@@ -43,7 +40,7 @@ public class CommandeServiceImpl implements CommandeService {
     public CommandeResponseDTO createCommande(CommandeRequestDTO commandeRequestDTO) {
         Commande commande = commandeMapper.toEntity(commandeRequestDTO);
 
-        Client client = getUserById(commandeRequestDTO.getClientId()).getClient();
+        Client client = getClientById(commandeRequestDTO.getClientId());
 
        int TVA = commandeRequestDTO.getTva();
 
@@ -75,7 +72,8 @@ public class CommandeServiceImpl implements CommandeService {
 
         int remise = getTotalRemise(sousTotal,
                 client.getNiveauFidelite(),
-                commandeRequestDTO.getCodePromo());
+                commandeRequestDTO.getCodePromo(),
+                commandeRequestDTO.getClientId());
 
         Double montantRemise = sousTotal * remise / 100;
         Double montantPreTax = sousTotal - montantRemise;
@@ -131,6 +129,7 @@ public class CommandeServiceImpl implements CommandeService {
         return payedCommandes.stream().map(commandeMapper::toResponseDto).toList();
     }
 
+    @Transactional
     @Override
     public Map<String , Object> deleteCommande(Long id) {
         Commande commande = findCommandeById(id);
@@ -177,9 +176,21 @@ public class CommandeServiceImpl implements CommandeService {
         return commandeMapper.toResponseDto(savedCommande);
     }
 
+    @Transactional
+    @Override
+    public CommandeResponseDTO updateCommandeStatutCanceled(Long id) {
+        Commande commande = findCommandeById(id);
+        canCancel(commande);
+        commande.getCommandeItems().forEach(item -> {
+            Produit produit = getProduitById(item.getProduit().getId());
+            produit.setStockDisponible(produit.getStockDisponible() + item.getQuantite());
+            produitRepository.save(produit);
+        });
+        commande.setStatutCommande(StatutCommande.CANCELED);
+        Commande canceledCommande = commandeRepository.save(commande);
 
-
-
+        return commandeMapper.toResponseDto(canceledCommande);
+    }
 
 
     // --------------------- Helper Methods (private)
@@ -188,30 +199,31 @@ public class CommandeServiceImpl implements CommandeService {
     private Commande findCommandeById(Long id){
         return commandeRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Commande not found with this id :" + id));
     }
-    private User getUserById(Long id){
-        User client =  userRepository.findUserByIdAndRole(id, Role.CLIENT);
+    private Client getClientById(Long id){
 
-        if(client == null){
-            throw  new UserNotFoundException("Client not found with this id : "+ id);
-        }
-        return client;
+        return clientRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Client not found with this id : "+ id));
     }
     private Produit getProduitById(Long id){
         return produitRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Product not found with this id : " + id));
     }
-    private int getTotalRemise(Double sousTotal, NiveauFidelite niveauFidelite,String codePromo){
+    private int getTotalRemise(Double sousTotal, NiveauFidelite niveauFidelite,String codePromo,Long clientId){
                 Map<String , Object> remiseAndThreshold = getRemiseAndThreshholdFromNiveauFidelite(niveauFidelite);
                 int fideliteRemise = (int) remiseAndThreshold.get("remise");
                 double fideliteThreshold = (double) remiseAndThreshold.get("threshold");
                 int remise = 0;
-                if(codePromo != null ){
+                if(codePromo != null && !isPromoCodeUsed(codePromo,clientId)){
                     remise += 5 ;
                 }
                  if(sousTotal >= fideliteThreshold){
                      remise += fideliteRemise;
                  }
                  return remise;
+    }
+    private boolean isPromoCodeUsed(String promoCode,Long id){
+        Client client = getClientById(id);
+        return commandeRepository.existsByCodePromoAndClient(promoCode,client);
     }
     private Map<String , Object> getRemiseAndThreshholdFromNiveauFidelite(NiveauFidelite niveauFidelite){
         Map<String , Object> remiseAndThreshhold = new HashMap<>();
@@ -259,10 +271,18 @@ public class CommandeServiceImpl implements CommandeService {
         }
 
     }
+    private void canCancel(Commande commande){
+        if(!commande.getStatutCommande().equals(StatutCommande.PENDING)){
+            throw new CannotDeleteException("Cannot Cancel Commande with status " + commande.getStatutCommande());
+        }
+        Double amountPaid = commande.getTotalTTC() - commande.getMontantRestant();
+        if(!commande.getPayments().isEmpty()){
+            throw new CannotDeleteException("Cannot Cancel Commande  because it has payments : " + amountPaid);
+        }
+    }
     private NiveauFidelite updateNiveauFidelite(Client client){
         int totalCommande = client.getTotalCommandes();
         Double totalCumule = client.getMontantCumule();
-        NiveauFidelite fidelite = NiveauFidelite.BASIC;
         if (totalCommande >= 20 || totalCumule >= 15000) {
             return NiveauFidelite.PLATINUM;
         } else if (totalCommande >= 10 || totalCumule >= 5000) {
