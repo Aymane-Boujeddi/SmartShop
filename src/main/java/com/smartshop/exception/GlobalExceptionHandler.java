@@ -8,11 +8,13 @@ import jakarta.persistence.PersistenceException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import java.sql.SQLException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -109,8 +111,39 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(response);
     }
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<ExceptionResponse> handleValidationException(
+            ValidationException exception,
+            HttpServletRequest request) {
+
+        ExceptionResponse response = ExceptionResponse.builder()
+                .message("Validation failed")
+                .errors(exception.getErrors())
+                .dateException(LocalDateTime.now())
+                .httpStatus(HttpStatus.BAD_REQUEST)
+                .path(request.getRequestURI())
+                .httpCode(HttpStatus.BAD_REQUEST.value())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+
+
+
 
     // --------------- Sql and jpa Exceptions
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ExceptionResponse> handleHttpMessageNotReadable(
+            HttpMessageNotReadableException exception,
+            HttpServletRequest request) {
+        return buildErrorResponse(
+                "Invalid input format: " + exception.getMostSpecificCause().getMessage(),
+                HttpStatus.BAD_REQUEST,
+                request
+        );
+    }
 
     @ExceptionHandler(SQLException.class)
     public ResponseEntity<ExceptionResponse> handleSQLException(
@@ -156,16 +189,31 @@ public class GlobalExceptionHandler {
         );
     }
 
-    
+
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ExceptionResponse> handleValidationException(
             MethodArgumentNotValidException exception,
             HttpServletRequest request) {
-        String message = "Validation error: " +
-                exception.getBindingResult().getAllErrors().get(0).getDefaultMessage();
-        return buildErrorResponse(message, HttpStatus.BAD_REQUEST, request);
+
+        List<String> errors = exception.getBindingResult()
+                .getAllErrors()
+                .stream()
+                .map(error -> error.getDefaultMessage())
+                .toList();
+
+        ExceptionResponse response = ExceptionResponse.builder()
+                .message("Validation failed")
+                .errors(errors)
+                .dateException(LocalDateTime.now())
+                .httpStatus(HttpStatus.BAD_REQUEST)
+                .path(request.getRequestURI())
+                .httpCode(HttpStatus.BAD_REQUEST.value())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
+
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ExceptionResponse> handleConstraintViolation(

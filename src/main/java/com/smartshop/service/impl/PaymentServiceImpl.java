@@ -8,6 +8,7 @@ import com.smartshop.enums.StatutCommande;
 import com.smartshop.enums.StatutPayment;
 import com.smartshop.enums.TypePayment;
 import com.smartshop.exception.PaymentNotPossibleException;
+import com.smartshop.exception.ValidationException;
 import com.smartshop.mapper.PaymentMapper;
 import com.smartshop.repository.CommandeRepository;
 import com.smartshop.repository.PaymentRepository;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -34,6 +36,12 @@ public class PaymentServiceImpl implements PaymentService {
     @Transactional
     @Override
     public PaymentResponseDTO createPayment(PaymentRequestDTO paymentRequestDTO) {
+
+        validatePaymentFields(paymentRequestDTO);
+        if(paymentRequestDTO.getTypePayment().equals(TypePayment.ESPECE) && paymentRequestDTO.getMontant() > 20000.0){
+            throw new PaymentNotPossibleException("Cannot pay this amount in with the type ESPECE ");
+        }
+
         Commande commande = getCommandeByID(paymentRequestDTO.getCommandeId());
         commandeEligibleForPayment(commande, paymentRequestDTO.getMontant());
         Payment payment = paymentMapper.toEntity(paymentRequestDTO);
@@ -50,7 +58,9 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setMontant(paymentRequestDTO.getMontant());
 
         Payment savedPayment = paymentRepository.save(payment);
+        commande.setNumeroPaiement(savedPayment.getNumeroPaiement());
 
+        commandeRepository.save(commande);
         return paymentMapper.toResponseDto(savedPayment);
     }
 
@@ -111,10 +121,10 @@ public class PaymentServiceImpl implements PaymentService {
         return paymentRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Payment not found with this id : "+ id));
     }
     private StatutPayment getStatutFromPaymentType(TypePayment typePayment){
-        if(!typePayment.equals(TypePayment.ESPECE)){
-            return StatutPayment.EN_ATTENTE;
-        }else{
+        if(typePayment.equals(TypePayment.ESPECE)){
             return StatutPayment.ENCAISSE;
+        }else{
+            return StatutPayment.EN_ATTENTE;
         }
     }
     private Commande getCommandeByID(Long id){
@@ -135,6 +145,26 @@ public class PaymentServiceImpl implements PaymentService {
                     " , is greater than Commande Montant restant : " + commande.getMontantRestant());
         }
 
+    }
+    private void validatePaymentFields(PaymentRequestDTO dto) {
+        TypePayment type = dto.getTypePayment();
+        List<String> errors = new ArrayList<>();
+
+        if (type == TypePayment.ESPECE && dto.getReference() == null) {
+            errors.add("Reference (reçu) is required for ESPÈCES payment");
+        }
+
+        if ((type == TypePayment.CHEQUE || type == TypePayment.VIREMENT) && dto.getBanque() == null) {
+            errors.add("Banque is required for " + type + " payment");
+        }
+
+        if ((type == TypePayment.CHEQUE || type == TypePayment.VIREMENT) && dto.getReference() == null) {
+            errors.add("Reference is required for " + type + " payment");
+        }
+
+        if(!errors.isEmpty()){
+            throw new ValidationException(errors);
+        }
     }
 
 }
