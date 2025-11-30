@@ -94,9 +94,16 @@ public class ProduitServiceImpl implements ProduitService {
     @Override
     public ProduitResponseDTO deleteProductById(Long id) {
         Produit produit = getProductById(id);
-        produit.setDeleted(true);
-        Produit deletedProduct = produitRepository.save(produit);
-        return produitMapper.toResponseDto(deletedProduct);
+
+        if(produit.getCommandeItems().isEmpty()){
+            produitRepository.delete(produit);
+            return produitMapper.toResponseDto(produit);
+        }else {
+            produit.setDeleted(true);
+            Produit deletedProduct = produitRepository.save(produit);
+            return produitMapper.toResponseDto(deletedProduct);
+
+        }
     }
 
 

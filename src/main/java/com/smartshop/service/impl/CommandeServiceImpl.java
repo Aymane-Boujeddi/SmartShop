@@ -38,6 +38,11 @@ public class CommandeServiceImpl implements CommandeService {
     @Transactional
     @Override
     public CommandeResponseDTO createCommande(CommandeRequestDTO commandeRequestDTO) {
+        if(commandeRequestDTO.getCommandeList() == null
+                || commandeRequestDTO.getCommandeList().isEmpty()){
+            throw new IllegalArgumentException("Commande must have at least one item");
+        }
+
         Commande commande = commandeMapper.toEntity(commandeRequestDTO);
 
         Client client = getClientById(commandeRequestDTO.getClientId());
@@ -54,6 +59,9 @@ public class CommandeServiceImpl implements CommandeService {
                                 "Insufficient stock for product: " + produit.getNom()
                                 + " . ID : " + produit.getId()
                         );
+                    }
+                    if(produit.isDeleted()){
+                        throw new IllegalArgumentException("This product does not exist (deleted) with id :" + produit.getId());
                     }
                     return CommandeItem.builder()
                             .quantite(commandeItemRequestDTO.getQuantite())
@@ -221,10 +229,14 @@ public class CommandeServiceImpl implements CommandeService {
                  }
                  return remise;
     }
-    private boolean isPromoCodeUsed(String promoCode,Long id){
-        Client client = getClientById(id);
-        return commandeRepository.existsByCodePromoAndClient(promoCode,client);
+
+    //check if the client already used this promoCOde
+
+    private boolean isPromoCodeUsed(String promoCode,Long clientId){
+
+        return commandeRepository.existsByCodePromoAndClient(promoCode,getClientById(clientId));
     }
+
     private Map<String , Object> getRemiseAndThreshholdFromNiveauFidelite(NiveauFidelite niveauFidelite){
         Map<String , Object> remiseAndThreshhold = new HashMap<>();
         int remise = 0;
