@@ -53,6 +53,6 @@ public class PaymentController {
     @PutMapping("/payment-rejete/{id}")
     public ResponseEntity<PaymentResponseDTO> updatePaymentToRejecte(@PathVariable Long id,HttpSession session){
         SecurityUtil.checkAdmin(session);
-        return ResponseEntity.ok();
+        return ResponseEntity.ok(paymentService.updatePaymentToRejete(id));
     }
 }
