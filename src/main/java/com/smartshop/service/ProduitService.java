@@ -2,6 +2,7 @@ package com.smartshop.service;
 
 import com.smartshop.dto.request.ProduitRequestDTO;
 import com.smartshop.dto.response.ProduitResponseDTO;
+import com.smartshop.entity.Produit;
 
 import java.time.LocalDateTime;
 import java.util.List;

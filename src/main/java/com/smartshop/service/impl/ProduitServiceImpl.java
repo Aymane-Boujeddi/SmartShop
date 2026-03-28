@@ -2,9 +2,13 @@ package com.smartshop.service.impl;
 
 import com.smartshop.dto.request.ProduitRequestDTO;
 import com.smartshop.dto.response.ProduitResponseDTO;
+import com.smartshop.entity.Commande;
+import com.smartshop.entity.CommandeItem;
 import com.smartshop.entity.Produit;
 import com.smartshop.mapper.ProduitMapper;
+import com.smartshop.repository.CommandeRepository;
 import com.smartshop.repository.ProduitRepository;
+import com.smartshop.service.CommandeService;
 import com.smartshop.service.ProduitService;
 import com.smartshop.specification.ProduitSpecification;
 import jakarta.persistence.EntityNotFoundException;
@@ -15,6 +19,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -23,7 +28,10 @@ public class ProduitServiceImpl implements ProduitService {
 
     private final ProduitRepository produitRepository;
 
+    private final CommandeRepository commandeRepository;
+
     private final ProduitMapper produitMapper;
+    private final CommandeService commandeService;
 
     @Override
     public ProduitResponseDTO createProduit(ProduitRequestDTO produitRequestDTO) {
@@ -106,11 +114,28 @@ public class ProduitServiceImpl implements ProduitService {
         }
     }
 
+    public List<ProduitResponseDTO> produitVend(){
+        List<Produit> produits = new ArrayList<>();
+        commandeRepository.findAll().forEach(commande -> {
+           commande.getCommandeItems().forEach(commandeItem -> {
+               produits.add(commandeItem.getProduit());
+           });
+        });
+
+        return produits.stream().map(produitMapper::toResponseDto).toList();
+    }
+
+
+
 
     private Produit getProductById(Long id){
         return produitRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Product not found with this id :" + id));
     }
+
+    // ------------------ mis
+
+
 
 
 }

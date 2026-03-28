@@ -12,6 +12,7 @@ import com.smartshop.repository.UserRepository;
 import com.smartshop.service.AuthService;
 import com.smartshop.util.PasswordUtil;
 import com.smartshop.util.SecurityUtil;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -64,7 +65,8 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public UserResponseDTO getCurrentUser(HttpSession session) {
-        User user = userRepository.findById(SecurityUtil.getCurrentUserId(session)).get();
+        User user = userRepository.findById(SecurityUtil.getCurrentUserId(session))
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id : " + SecurityUtil.getCurrentUserId(session)));
 
         if(user.getRole().equals(Role.ADMIN)){
             return userMapper.toAdminResponseDto(user);

@@ -66,7 +66,13 @@ public class ClientServiceImpl implements ClientService {
         List<User> users = userRepository.findAll();
 
         return users.stream()
-                .map(userMapper::toClientResponseDto)
+                .map(user -> {
+                    if(user.getRole().equals(Role.ADMIN)){
+                        return userMapper.toAdminResponseDto(user);
+                    }else{
+                        return userMapper.toClientResponseDto(user);
+                    }
+                })
                 .toList();
     }
 

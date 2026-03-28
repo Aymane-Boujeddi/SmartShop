@@ -133,8 +133,9 @@ public class CommandeServiceImpl implements CommandeService {
 
     @Override
     public List<CommandeResponseDTO> getPayedCommandes() {
-        List<Commande> payedCommandes = commandeRepository.findAllByMontantRestant(0.0);
-        return payedCommandes.stream().map(commandeMapper::toResponseDto).toList();
+        List<Commande> payedCommandes = commandeRepository.findAllByMontantRestantAndStatutCommande(0.0,StatutCommande.PENDING);
+        return payedCommandes.stream()
+                .map(commandeMapper::toResponseDto).toList();
     }
 
     @Transactional

@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ClientResponseDTO {
 
-    private Long id;
+    private Long clientId;
     private String nom;
     private String email;
     private String niveauFidelite;

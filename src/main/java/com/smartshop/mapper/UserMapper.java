@@ -10,11 +10,12 @@ import org.mapstruct.Named;
 @Mapper(componentModel = "spring",uses = {ClientMapper.class})
 public interface UserMapper {
 
-
+    @Mapping(target = "userId",source = "id")
     @Mapping(target = "role",source = "role",qualifiedByName = "roleToString")
     @Mapping(target = "client",ignore = true)
     UserResponseDTO toAdminResponseDto(User user);
 
+    @Mapping(target = "userId",source = "id")
     @Mapping(target = "role",source = "role",qualifiedByName = "roleToString")
     @Mapping(target = "client",source = "client")
     UserResponseDTO toClientResponseDto(User user);

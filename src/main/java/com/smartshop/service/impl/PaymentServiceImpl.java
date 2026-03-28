@@ -67,6 +67,9 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public List<PaymentResponseDTO> getPaymentsForCommande(Long id) {
         List<Payment> paymentList = getCommandeByID(id).getPayments();
+        if(paymentList.isEmpty()){
+            throw new EntityNotFoundException("There is not payments for this Commande with id : " + id);
+        }
         return paymentList.stream().map(paymentMapper::toResponseDto).toList();
     }
 
@@ -150,15 +153,15 @@ public class PaymentServiceImpl implements PaymentService {
         TypePayment type = dto.getTypePayment();
         List<String> errors = new ArrayList<>();
 
-        if (type == TypePayment.ESPECE && dto.getReference() == null) {
+        if (type == TypePayment.ESPECE && (dto.getReference() == null || dto.getReference().isBlank())) {
             errors.add("Reference (reçu) is required for ESPÈCES payment");
         }
 
-        if ((type == TypePayment.CHEQUE || type == TypePayment.VIREMENT) && dto.getBanque() == null) {
+        if ((type == TypePayment.CHEQUE || type == TypePayment.VIREMENT) && (dto.getBanque() == null || dto.getBanque().isBlank())) {
             errors.add("Banque is required for " + type + " payment");
         }
 
-        if ((type == TypePayment.CHEQUE || type == TypePayment.VIREMENT) && dto.getReference() == null) {
+        if ((type == TypePayment.CHEQUE || type == TypePayment.VIREMENT) && (dto.getReference() == null || dto.getReference().isBlank())) {
             errors.add("Reference is required for " + type + " payment");
         }
 
